@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CYBER INTERCEPT: IT SEES YOU</title>
+<style>
+:root{--primary:#00ff66;--alert:#ff1a1a;--bg:#030104;--card:#0b0508;--border:#2a0f14;--text:#d8cfd2;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{background:var(--bg);color:var(--text);font-family:monospace;margin:0;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:49;background:radial-gradient(ellipse at center,transparent 35%,rgba(120,0,0,var(--fear,0)) 100%);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+.game-container{background:var(--card);border:2px solid var(--border);width:100%;max-width:600px;padding:30px;border-radius:4px;position:relative;z-index:1;box-shadow:0 0 40px rgba(255,0,0,calc(var(--fear,0)*.6))}
+.header{border-bottom:2px dashed var(--border);padding-bottom:15px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.title{color:var(--primary);font-weight:bold}
+.counter{background:#140a0d;padding:5px 10px;border:1px solid var(--border);white-space:nowrap}
+.threat-panel{background:rgba(255,26,26,.07);border:1px solid var(--alert);padding:15px;margin-bottom:25px}
+.threat-title{color:var(--alert);font-size:.85rem;margin-bottom:8px;font-weight:bold}
+.bar-wrap{background:#1a0303;border:1px solid rgba(255,26,26,.4);height:25px;position:relative;overflow:hidden}
+.bar{background:linear-gradient(90deg,#600,#f11);height:100%;width:0%;transition:width .3s linear}
+.bar-text{position:absolute;width:100%;text-align:center;top:4px;font-weight:bold;color:#fff}
+.whisper{min-height:1.4em;margin-top:10px;color:var(--alert);font-size:.9rem;letter-spacing:.1em;text-shadow:0 0 6px #f00}
+.quiz{text-align:center;padding:10px 0}
+.question{font-size:2.5rem;margin-bottom:20px;color:#fff}
+.input-group{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+input{background:#000;border:1px solid var(--primary);color:var(--primary);font-family:monospace;font-size:1.8rem;padding:5px;width:150px;text-align:center;outline:none}
+button{background:transparent;border:1px solid var(--primary);color:var(--primary);font-family:monospace;font-size:1.1rem;padding:8px 20px;cursor:pointer;font-weight:bold}
+button:hover{background:var(--primary);color:var(--bg)}
+.feedback{min-height:20px;margin-top:15px;font-weight:bold}
+.screen{display:none;text-align:center}
+.screen.visible{display:block}
+.win-title{color:var(--primary);font-size:2rem}
+.lose-title{color:var(--alert);font-size:2rem;text-shadow:0 0 12px #f00}
+.rule{margin-bottom:30px;color:#8a7a7e}
+.glitch{animation:glitch 2.5s infinite steps(1)}
+@keyframes glitch{0%,92%,100%{transform:none;text-shadow:none}93%{transform:translateX(-4px);text-shadow:3px 0 #f00,-3px 0 #0ff}95%{transform:translateX(5px) skewX(8deg);text-shadow:-3px 0 #f00,3px 0 #0ff}97%{transform:translateX(-2px)}}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translate(-8px,3px)}40%{transform:translate(8px,-4px)}60%{transform:translate(-6px,-2px)}80%{transform:translate(5px,4px)}}
+.flicker{animation:flick .15s 3}
+@keyframes flick{50%{opacity:.25}}
+.eyes{position:fixed;z-index:48;pointer-events:none;display:none;gap:18px;font-size:1.6rem;color:#f00;text-shadow:0 0 14px #f00,0 0 30px #f00;animation:blink 3s infinite}
+@keyframes blink{0%,45%,55%,100%{opacity:1}50%{opacity:0}}
+#scare{position:fixed;inset:0;z-index:100;background:#000;display:none;align-items:center;justify-content:center;flex-direction:column;color:#f11;text-align:center}
+#scare pre{font-size:clamp(9px,2.6vw,16px);line-height:1.1;margin:0;text-shadow:0 0 18px #f00;animation:shake .2s infinite}
+#scare h1{font-size:clamp(1.6rem,8vw,3.5rem);margin:10px 0 0;letter-spacing:.2em}
+#mute{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:10px;z-index:60;font-size:.8rem;padding:4px 10px}
+#warn{margin-top:18px;font-size:.75rem;color:#6d5a5f}
+@media (prefers-reduced-motion:reduce){.glitch,.shake,.flicker,.eyes,#scare pre,body::after{animation:none}}
+</style>
+</head>
+<body>
+<button id="mute">SOUND: ON</button>
+<div class="eyes" id="eyes1"><span>●</span><span>●</span></div>
+<div class="eyes" id="eyes2"><span>●</span><span>●</span></div>
+<div id="scare"><pre>
+     _______________
+    /               \
+   |   ___     ___   |
+   |  /   \   /   \  |
+   |  | ● |   | ● |  |
+   |  \___/   \___/  |
+   |       /\        |
+   |      /__\       |
+    \   |||||||||   /
+     \__|_|_|_|_|__/
+</pre><h1>I SEE YOU</h1></div>
+
+<div class="game-container" id="box">
+  <div id="start-screen" class="screen visible">
+    <h2 class="win-title glitch">BREACH IMMINENT</h2>
+    <p>Something is inside your system. It is getting closer.</p>
+    <p>Answer <strong>20 integer questions</strong> before it reaches 100%.</p>
+    <p class="rule">Type the minus key (-) for negative answers.<br>Turn your sound up. Turn the lights off.</p>
+    <button id="start-action-btn">Initialize Defenses</button>
+    <div id="warn">Contains flashing effects, loud sounds and a jump scare. Not for young children.</div>
+  </div>
+
+  <div id="play-screen" class="screen">
+    <div class="header">
+      <div class="title glitch">FIREWALL_DECRYPT_CORE</div>
+      <div class="counter">TOKENS: <span id="q-progress">1</span>/20</div>
+    </div>
+    <div class="threat-panel">
+      <div class="threat-title">It Is Crawling Through The Wires</div>
+      <div class="bar-wrap"><div class="bar" id="breach-bar"></div><div class="bar-text" id="breach-text">0% COMPROMISED</div></div>
+      <div class="whisper" id="whisper"></div>
+    </div>
+    <div class="quiz">
+      <div class="question" id="question-text">…</div>
+      <div class="input-group">
+        <input type="text" id="answer-input" autocomplete="off" placeholder="?">
+        <button id="submit-action-btn">Submit</button>
+      </div>
+      <div class="feedback" id="feedback-text"></div>
+    </div>
+  </div>
+
+  <div id="win-screen" class="screen">
+    <h2 class="win-title">SYSTEM SECURED</h2>
+    <p>It’s gone… for now. Did you hear that?</p>
+    <p style="margin-bottom:30px" id="win-stats"></p>
+    <button id="win-retry-action-btn">Rerun System</button>
+  </div>
+
+  <div id="lose-screen" class="screen">
+    <h2 class="lose-title glitch">IT’S BEHIND YOU</h2>
+    <p>Network isolation failure. It is inside now.</p>
+    <p style="margin-bottom:30px" id="lose-stats"></p>
+    <button id="lose-retry-action-btn">Try Again (if you dare)</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var TOTAL = 20;
+  var q = 1, ans = 0, prog = 0, mistakes = 0, t0 = 0, timer = null, active = false;
+  var whisperTimer = null, beatTimer = null, soundOn = true, ac = null, drone = null;
+  var WHISPERS = ['I SEE YOU','DON’T LOOK AWAY','YOUR FILES ARE MINE','HURRY','IT’S IN THE WALLS','TOO SLOW','I CAN HEAR YOU TYPING','BEHIND YOU','NO ONE IS COMING','THE LIGHTS ARE OFF'];
+
+  function $(id){ return document.getElementById(id); }
+  function show(id){ ['start-screen','play-screen','win-screen','lose-screen'].forEach(function(s){ $(s).className = s===id ? 'screen visible' : 'screen'; }); }
+
+  /* ---------- audio ---------- */
+  function audio(){
+    if(!soundOn) return null;
+    if(!ac){ try{ ac = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+    if(ac.state==='suspended') ac.resume();
+    return ac;
+  }
+  function startDrone(){
+    var a = audio(); if(!a || drone) return;
+    var g = a.createGain(); g.gain.value = 0.05; g.connect(a.destination);
+    var o1 = a.createOscillator(), o2 = a.createOscillator();
+    o1.type = 'sawtooth'; o1.frequency.value = 55; o2.type = 'sawtooth'; o2.frequency.value = 58.3;
+    var f = a.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 180;
+    o1.connect(f); o2.connect(f); f.connect(g); o1.start(); o2.start();
+    drone = {g:g,o1:o1,o2:o2};
+  }
+  function stopDrone(){
+    if(!drone) return;
+    try{ drone.o1.stop(); drone.o2.stop(); }catch(e){}
+    drone = null;
+  }
+  function thump(freq, vol, dur){
+    var a = audio(); if(!a) return;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(freq, a.currentTime); o.frequency.exponentialRampToValueAtTime(freq/3, a.currentTime+dur);
+    g.gain.setValueAtTime(vol, a.currentTime); g.gain.exponentialRampToValueAtTime(0.001, a.currentTime+dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime+dur);
+  }
+  function noise(vol, dur){
+    var a = audio(); if(!a) return;
+    var n = Math.floor(a.sampleRate*dur), b = a.createBuffer(1,n,a.sampleRate), d = b.getChannelData(0);
+    for(var i=0;i<n;i++) d[i] = (Math.random()*2-1)*(1-i/n);
+    var s = a.createBufferSource(), g = a.createGain(); s.buffer = b; g.gain.value = vol;
+    s.connect(g); g.connect(a.destination); s.start();
+  }
+  function beat(){
+    if(!active) return;
+    thump(70,0.5,0.18); setTimeout(function(){ thump(60,0.35,0.2); }, 170);
+    beatTimer = setTimeout(beat, 1300 - prog*9);
+  }
+
+  /* ---------- scares ---------- */
+  function whisper(){
+    if(!active) return;
+    var w = WHISPERS[Math.floor(Math.random()*WHISPERS.length)];
+    $('whisper').textContent = w;
+    $('box').classList.remove('flicker'); void $('box').offsetWidth; $('box').classList.add('flicker');
+    noise(0.12,0.25);
+    setTimeout(function(){ $('whisper').textContent = ''; }, 1800);
+    whisperTimer = setTimeout(whisper, 4000 + Math.random()*5000 - prog*25);
+  }
+  function placeEyes(){
+    ['eyes1','eyes2'].forEach(function(id,i){
+      var e = $(id);
+      if(prog < (i? 60:35)){ e.style.display='none'; return; }
+      if(e.style.display!=='flex'){
+        e.style.display='flex';
+        e.style.left = (i? 78:6)+'%'; e.style.top = (i? 70:22)+'%';
+      }
+    });
+  }
+  function jumpScare(){
+    var s = $('scare'); s.style.display='flex';
+    noise(0.9,1.1); thump(90,1,0.9); thump(45,1,1.2);
+    setTimeout(function(){ s.style.display='none'; }, 1400);
+  }
+
+  /* ---------- game ---------- */
+  function start(){
+    audio(); startDrone();
+    q = 1; prog = 0; mistakes = 0; active = true; t0 = Date.now();
+    show('play-screen'); newQ(); ui();
+    clearInterval(timer);
+    timer = setInterval(function(){
+      prog = Math.min(100, prog + 1.5); ui();
+      if(prog >= 100) end(false);
+    }, 1000);
+    clearTimeout(beatTimer); beat();
+    clearTimeout(whisperTimer); whisperTimer = setTimeout(whisper, 3000);
+  }
+  function newQ(){
+    var ops = ['+','-','*'], op = ops[Math.floor(Math.random()*3)];
+    var a = Math.floor(Math.random()*25)-12, b = Math.floor(Math.random()*25)-12;
+    ans = op==='+' ? a+b : op==='-' ? a-b : a*b;
+    $('question-text').textContent = (a<0?'('+a+')':a)+' '+op+' '+(b<0?'('+b+')':b);
+    $('answer-input').value=''; $('answer-input').focus();
+  }
+  function submit(){
+    if(!active) return;
+    var v = $('answer-input').value.trim().replace(/[\u2212\u2013]/g,'-'); if(v==='') return;
+    var fb = $('feedback-text');
+    if(!/^-?\d+$/.test(v)){ fb.style.color='var(--alert)'; fb.textContent='✗ INTEGERS ONLY'; return; }
+    if(parseInt(v,10)===ans){
+      fb.style.color='var(--primary)'; fb.textContent='✓ IT FLINCHES';
+      thump(400,0.15,0.1);
+      if(q>=TOTAL) end(true); else { q++; newQ(); ui(); }
+    } else {
+      mistakes++; prog = Math.min(100, prog+7);
+      fb.style.color='var(--alert)'; fb.textContent='✗ IT HEARD THAT';
+      var b = $('box'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+      noise(0.5,0.3); thump(50,0.8,0.4);
+      $('answer-input').value=''; $('answer-input').focus(); ui();
+      if(prog>=100) end(false);
+    }
+  }
+  function ui(){
+    $('q-progress').textContent = q;
+    $('breach-bar').style.width = prog+'%';
+    $('breach-text').textContent = Math.floor(prog)+'% COMPROMISED';
+    document.documentElement.style.setProperty('--fear', (prog/100*0.9).toFixed(2));
+    placeEyes();
+  }
+  function end(win){
+    if(!active) return; active = false;
+    clearInterval(timer); clearTimeout(beatTimer); clearTimeout(whisperTimer);
+    stopDrone(); $('eyes1').style.display = $('eyes2').style.display = 'none';
+    var secs = ((Date.now()-t0)/1000).toFixed(1);
+    if(win){
+      document.documentElement.style.setProperty('--fear','0');
+      $('win-stats').textContent = 'Time: '+secs+'s | Errors: '+mistakes;
+      show('win-screen');
+    } else {
+      $('lose-stats').textContent = 'Tokens cleared: '+(q-1)+'/'+TOTAL+' | Errors: '+mistakes;
+      jumpScare(); show('lose-screen');
+    }
+  }
+
+  $('start-action-btn').addEventListener('click', start);
+  $('win-retry-action-btn').addEventListener('click', start);
+  $('lose-retry-action-btn').addEventListener('click', start);
+  $('submit-action-btn').addEventListener('click', submit);
+  $('answer-input').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
+  $('mute').addEventListener('click', function(){
+    soundOn = !soundOn; this.textContent = 'SOUND: '+(soundOn?'ON':'OFF');
+    if(!soundOn){ stopDrone(); if(ac) ac.suspend(); } else if(active){ startDrone(); }
+  });
+})();
+</script>
+</body>
+</html>
