@@ -1,3 +1,6 @@
+<img width="2760" height="2480" alt="system_breach_integer_protocol_cover" src="https://github.com/user-attachments/assets/c8c50570-104b-4f29-b65d-0951cc2865da" />
+
+
 # Integers-halloween-Game-
 is a Halloween math survival game. A hacker has locked your system with a terminal virus. To stop the download and purge the threat, you must solve 20 rapid-fire integer questions before time runs out. Balance positive and negative numbers perfectly to save your data, or the ghost in the machine wins forever.
 
